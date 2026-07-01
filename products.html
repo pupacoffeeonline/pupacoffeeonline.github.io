@@ -1,1 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Products | Pup A Coffee</title>
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+
+<style>
+:root{
+--espresso:#2B1B1B;
+--cocoa:#4B3F30;
+--gold:#F0CB3C;
+--cream:#FAF9F6;
+--char:#333;
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+html{
+scroll-behavior:smooth;
+}
+
+body{
+font-family:Poppins,sans-serif;
+background:linear-gradient(#fffdf9,var(--cream));
+color:var(--espresso);
+}
+
+nav{
+position:fixed;
+top:18px;
+left:50%;
+transform:translateX(-50%);
+width:min(1200px,92%);
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:14px 26px;
+background:rgba(255,255,255,.65);
+backdrop-filter:blur(14px);
+border-radius:18px;
+box-shadow:0 8px 30px rgba(0,0,0,.08);
+z-index:100;
+}
+
+nav img{
+height:52px;
+}
+
+nav ul{
+display:flex;
+gap:28px;
+list-style:none;
+}
+
+nav a{
+text-decoration:none;
+color:var(--espresso);
+font-weight:600;
+transition:.3s;
+}
+
+nav a:hover{
+color:var(--gold);
+}
+
+.hero{
+padding:170px 8% 90px;
+text-align:center;
+}
+
+.hero h1{
+font-family:"DM Serif Display",serif;
+font-size:4rem;
+margin-bottom:15px;
+}
+
+.hero p{
+max-width:700px;
+margin:auto;
+font-size:1.1rem;
+line-height:1.8;
+color:#555;
+}
+
+.products{
+padding:0 8% 100px;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+gap:35px;
+}
+
+.product{
+background:white;
+border-radius:24px;
+overflow:hidden;
+box-shadow:0 12px 30px rgba(0,0,0,.08);
+transition:.35s;
+display:flex;
+flex-direction:column;
+}
+
+.product:hover{
+transform:translateY(-8px);
+}
+
+.product img{
+width:100%;
+height:280px;
+object-fit:cover;
+background:#eee;
+}
+
+.product-content{
+padding:28px;
+flex:1;
+display:flex;
+flex-direction:column;
+}
+
+.product h2{
+font-family:"DM Serif Display",serif;
+margin-bottom:10px;
+font-size:2rem;
+}
+
+.product p{
+line-height:1.7;
+color:#555;
+margin-bottom:20px;
+}
+
+.price{
+font-size:1.8rem;
+font-weight:700;
+color:var(--espresso);
+margin-bottom:20px;
+}
+
+.tags{
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+margin-bottom:25px;
+}
+
+.tag{
+padding:8px 14px;
+background:var(--cream);
+border-radius:999px;
+font-size:.9rem;
+font-weight:500;
+}
+
+.button{
+display:inline-block;
+padding:15px;
+background:var(--espresso);
+color:white;
+text-decoration:none;
+border-radius:999px;
+text-align:center;
+font-weight:600;
+transition:.3s;
+margin-top:auto;
+}
+
+.button:hover{
+background:var(--gold);
+color:var(--espresso);
+}
+
+.info{
+padding:80px 8%;
+text-align:center;
+max-width:900px;
+margin:auto;
+}
+
+.info h2{
+font-family:"DM Serif Display",serif;
+font-size:2.7rem;
+margin-bottom:20px;
+}
+
+.info p{
+font-size:1.05rem;
+line-height:1.9;
+color:#555;
+}
+
+footer{
+margin-top:80px;
+background:var(--espresso);
+color:white;
+text-align:center;
+padding:40px;
+}
+
+/* Chat Widget */
+
+#chat-btn{
+position:fixed;
+bottom:25px;
+right:25px;
+width:65px;
+height:65px;
+background:white;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+box-shadow:0 10px 25px rgba(0,0,0,.2);
+cursor:pointer;
+z-index:999;
+}
+
+#chat-btn img{
+width:35px;
+}
+
+#chat-box{
+display:none;
+flex-direction:column;
+position:fixed;
+bottom:100px;
+right:25px;
+width:340px;
+height:470px;
+background:white;
+border-radius:20px;
+overflow:hidden;
+box-shadow:0 15px 35px rgba(0,0,0,.25);
+z-index:999;
+}
+
+#chat-header{
+background:var(--espresso);
+color:white;
+padding:18px;
+text-align:center;
+font-weight:600;
+}
+
+#chat-messages{
+flex:1;
+padding:15px;
+overflow-y:auto;
+}
+
+#chat-input-area{
+display:flex;
+border-top:1px solid #eee;
+}
+
+#chat-input{
+flex:1;
+border:none;
+padding:15px;
+font-family:Poppins;
+outline:none;
+}
+
+#send-btn{
+padding:0 20px;
+border:none;
+background:var(--gold);
+cursor:pointer;
+font-weight:600;
+}
+
+@media(max-width:900px){
+
+nav ul{
+display:none;
+}
+
+.hero h1{
+font-size:3rem;
+}
+
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+
+<img src="images/logo.png" alt="Logo">
+
+<ul>
+<li><a href="index.html">Home</a></li>
+<li><a href="products.html">Products</a></li>
+<li><a href="about.html">About</a></li>
+<li><a href="faq.html">FAQ</a></li>
+<li><a href="contact.html">Contact</a></li>
+</ul>
+
+</nav>
+
+<section class="hero">
+
+<h1>Our Products</h1>
+
+<p>
+Discover handcrafted café-inspired drink mixes designed exclusively for dogs. Every Pup A Coffee refresher is caffeine-free, made with quality ingredients, and perfect for making treat time special.
+</p>
+
+</section>
+
+<section class="products">
+
+<div class="product">
+
+<img src="images/puppuccino.jpg" alt="Puppuccino">
+
+<div class="product-content">
+
+<h2>Puppuccino Mix</h2>
+
+<p>
+Our signature café drink. A creamy, dog-safe powdered mix that creates the classic coffee shop experience for your pup.
+</p>
+
+<div class="tags">
+<div class="tag">Caffeine Free</div>
+<div class="tag">Natural</div>
+<div class="tag">Best Seller</div>
+</div>
+
+<div class="price">$9.99</div>
+
+<a href="#" class="button">Coming Soon</a>
+
+</div>
+
+</div>
+
+<div class="product">
+
+<img src="images/bark-latte.jpg" alt="Bark Latte">
+
+<div class="product-content">
+
+<h2>Bark Latte</h2>
+
+<p>
+A smooth vanilla-inspired refresher that delivers the cozy feeling of a café latte while remaining completely pet-safe.
+</p>
+
+<div class="tags">
+<div class="tag">Vanilla</div>
+<div class="tag">Dog Safe</div>
+<div class="tag">Premium</div>
+</div>
+
+<div class="price">$10.99</div>
+
+<a href="#" class="button">Coming Soon</a>
+
+</div>
+
+</div>
+
+<div class="product">
+
+<img src="images/pup-mocha.jpg" alt="Pup Mocha">
+
+<div class="product-content">
+
+<h2>Pup Mocha</h2>
+
+<p>
+Inspired by your favorite mocha—but made entirely for dogs using safe, carefully selected ingredients.
+</p>
+
+<div class="tags">
+<div class="tag">Cafe Inspired</div>
+<div class="tag">Small Batch</div>
+<div class="tag">Limited</div>
+</div>
+
+<div class="price">$11.99</div>
+
+<a href="#" class="button">Coming Soon</a>
+
+</div>
+
+</div>
+
+</section>
+
+<section class="info">
+
+<h2>Freshly Mixed Every Time</h2>
+
+<p>
+Our refreshers arrive as premium powdered mixes designed to be blended with water or unsweetened almond milk before serving. This keeps every cup fresh while giving your pup a unique café experience. Every recipe is completely caffeine-free and intended for dogs 6 months of age and older.
+</p>
+
+</section>
+
+<footer>
+
+<p>© 2026 Pup A Coffee. All Rights Reserved.</p>
+
+</footer>
+
+<!-- Chat Widget -->
+
+<div id="chat-btn" onclick="toggleChat()">
+<img src="https://cdn-icons-png.flaticon.com/512/2950/2950714.png">
+</div>
+
+<div id="chat-box">
+
+<div id="chat-header">
+Mocha ☕
+</div>
+
+<div id="chat-messages">
+<p><strong>Mocha:</strong> Welcome to Pup A Coffee! 🐶</p>
+</div>
+
+<div id="chat-input-area">
+<input id="chat-input" placeholder="Ask Pup A Coffee...">
+<button id="send-btn" onclick="sendMessage()">Send</button>
+</div>
+
+</div>
+
+<script>
+function toggleChat(){
+const box=document.getElementById("chat-box");
+box.style.display=(box.style.display==="flex")?"none":"flex";
+}
+
+function sendMessage(){
+
+const input=document.getElementById("chat-input");
+const messages=document.getElementById("chat-messages");
+
+if(input.value.trim()=="") return;
+
+messages.innerHTML+=`
+<p><strong>You:</strong> ${input.value}</p>
+<p><strong>Mocha:</strong> Thanks for reaching out! We'll respond soon. 🐾</p>
+`;
+
+messages.scrollTop=messages.scrollHeight;
+input.value="";
+}
+</script>
+
+</body>
+</html>
