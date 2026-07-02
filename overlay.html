@@ -1,1 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pup A Coffee Support</title>
 
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --espresso:#2B1B1B;
+  --gold:#F0CB3C;
+  --cream:#FAF9F6;
+  --shadow:0 12px 40px rgba(0,0,0,.25);
+}
+
+body{
+  margin:0;
+  font-family:Poppins, sans-serif;
+}
+
+/* BUTTON */
+#chat-button{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  width:60px;
+  height:60px;
+  border-radius:50%;
+  background:var(--espresso);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  box-shadow:var(--shadow);
+  z-index:999999;
+}
+
+#chat-button img{
+  width:28px;
+  filter: brightness(0) invert(1);
+}
+
+/* BOX */
+#chat-box{
+  position:fixed;
+  bottom:90px;
+  right:20px;
+  width:340px;
+  height:480px;
+  background:var(--cream);
+  border-radius:18px;
+  box-shadow:var(--shadow);
+  overflow:hidden;
+
+  display:flex;
+  flex-direction:column;
+
+  transform:scale(.85);
+  opacity:0;
+  visibility:hidden;
+  transform-origin:bottom right;
+  transition:.25s ease;
+  z-index:999999;
+}
+
+#chat-box.open{
+  transform:scale(1);
+  opacity:1;
+  visibility:visible;
+}
+
+/* HEADER */
+#chat-header{
+  background:var(--espresso);
+  color:white;
+  padding:14px;
+  text-align:center;
+  font-weight:600;
+}
+
+/* MESSAGES */
+#chat-messages{
+  flex:1;
+  padding:10px;
+  overflow-y:auto;
+  font-size:14px;
+}
+
+.msg{
+  margin:8px 0;
+  padding:10px 12px;
+  border-radius:12px;
+  max-width:85%;
+  animation:fade .2s ease;
+}
+
+.user{
+  background:var(--gold);
+  color:var(--espresso);
+  margin-left:auto;
+}
+
+.bot{
+  background:#eee;
+}
+
+/* INPUT */
+#input-area{
+  display:flex;
+  border-top:1px solid #ddd;
+}
+
+#chat-input{
+  flex:1;
+  padding:10px;
+  border:none;
+  outline:none;
+  font-family:Poppins;
+  resize:none;
+}
+
+#send{
+  background:var(--espresso);
+  color:white;
+  border:none;
+  padding:10px 14px;
+  cursor:pointer;
+}
+
+#send:hover{
+  background:#1f1313;
+}
+
+/* typing */
+.typing{
+  font-style:italic;
+  opacity:.7;
+}
+
+/* animation */
+@keyframes fade{
+  from{opacity:0;transform:translateY(6px);}
+  to{opacity:1;transform:translateY(0);}
+}
+</style>
+</head>
+
+<body>
+
+<!-- BUTTON -->
+<div id="chat-button" onclick="toggleChat()">
+  <img src="https://cdn-icons-png.flaticon.com/512/2950/2950714.png">
+</div>
+
+<!-- CHAT -->
+<div id="chat-box">
+  <div id="chat-header">Mocha ☕ Support</div>
+
+  <div id="chat-messages"></div>
+
+  <div id="input-area">
+    <textarea id="chat-input" rows="1" placeholder="Ask Pup A Coffee..."></textarea>
+    <button id="send" onclick="sendMessage()">Send</button>
+  </div>
+</div>
+
+<script>
+
+/* 🔑 PUT YOUR KEY HERE */
+const API_KEY = "AQ.Ab8RN6LL9YRsGN7lJbixyR9hFNwUy7etI2cuf_Vg3xEHw4PHsg";
+
+/* OPEN CHAT */
+function toggleChat(){
+  document.getElementById("chat-box").classList.toggle("open");
+}
+
+/* MESSAGE UI */
+function addMsg(text,type){
+  const div=document.createElement("div");
+  div.className="msg "+type;
+  div.innerText=text;
+
+  const box=document.getElementById("chat-messages");
+  box.appendChild(div);
+  box.scrollTop=box.scrollHeight;
+}
+
+/* TYPING */
+function showTyping(){
+  const div=document.createElement("div");
+  div.className="msg bot typing";
+  div.id="typing";
+  div.innerText="Mocha is thinking...";
+  document.getElementById("chat-messages").appendChild(div);
+}
+
+/* SEND */
+async function sendMessage(){
+
+  const input=document.getElementById("chat-input");
+  const text=input.value.trim();
+  if(!text) return;
+
+  addMsg(text,"user");
+  input.value="";
+
+  showTyping();
+
+  try{
+
+    const res=await fetch(
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key="+API_KEY,
+      {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body:JSON.stringify({
+          contents:[{
+            parts:[{
+              text:`
+You are Mocha, a Pup A Coffee support assistant.
+
+Rules:
+- Friendly café tone
+- Short replies (2–6 sentences)
+- Only talk about Pup A Coffee
+- Products are caffeine-free dog drink powders
+- Must be mixed with water or almond milk
+- Pets must be 6+ months old
+- USA shipping only
+
+User: ${text}
+`
+            }]
+          }]
+        })
+      }
+    );
+
+    const data = await res.json();
+    console.log("GEMINI RESPONSE:", data);
+
+    document.getElementById("typing")?.remove();
+
+    let reply;
+
+    if(data?.candidates?.length){
+      reply = data.candidates[0].content.parts[0].text;
+    } else {
+      reply = "⚠️ API ERROR:\n" + JSON.stringify(data, null, 2);
+    }
+
+    addMsg(reply,"bot");
+
+  }catch(err){
+    document.getElementById("typing")?.remove();
+    addMsg("❌ Network error. Check API key or internet.","bot");
+    console.error(err);
+  }
+}
+
+/* ENTER = SEND / SHIFT+ENTER = NEW LINE */
+document.getElementById("chat-input").addEventListener("keydown",(e)=>{
+  if(e.key==="Enter" && !e.shiftKey){
+    e.preventDefault();
+    sendMessage();
+  }
+});
+
+</script>
+
+</body>
+</html>
