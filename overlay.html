@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mocha Assistant | Pup A Coffee</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+
+:root{
+  --espresso:#2B1B1B;
+  --gold:#F0CB3C;
+  --cream:#FAF9F6;
+  --user:#ffffff;
+  --bot:#f2f2f2;
+  --shadow:0 18px 50px rgba(0,0,0,.18);
+}
+
+/* BODY */
+body{
+  margin:0;
+  font-family:Poppins, sans-serif;
+  background:linear-gradient(180deg,#fffdf9,#f5f3ee);
+}
+
+/* FLOAT BUTTON */
+#chat-button{
+  position:fixed;
+  bottom:22px;
+  right:22px;
+  width:62px;
+  height:62px;
+  border-radius:50%;
+  background:var(--espresso);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  box-shadow:var(--shadow);
+  transition:.25s ease;
+  z-index:9999;
+}
+
+#chat-button:hover{
+  background:var(--gold);
+  transform:scale(1.08);
+}
+
+#chat-button img{
+  width:30px;
+  filter:brightness(0) invert(1);
+}
+
+/* CHAT WINDOW */
+#chat-box{
+  position:fixed;
+  bottom:100px;
+  right:22px;
+  width:420px;
+  height:600px;
+  background:white;
+  border-radius:18px;
+  box-shadow:var(--shadow);
+  overflow:hidden;
+  display:none;
+  flex-direction:column;
+}
+
+#chat-box.open{
+  display:flex;
+}
+
+/* HEADER */
+#chat-header{
+  background:var(--espresso);
+  color:white;
+  padding:16px;
+  text-align:center;
+  font-weight:600;
+}
+
+/* MESSAGES AREA */
+#chat-body{
+  flex:1;
+  padding:16px;
+  overflow-y:auto;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+/* BUBBLES */
+.msg{
+  padding:12px 14px;
+  border-radius:14px;
+  max-width:85%;
+  font-size:13px;
+  line-height:1.5;
+  animation:fade .2s ease;
+}
+
+.bot{
+  background:var(--bot);
+  align-self:flex-start;
+}
+
+.user{
+  background:var(--gold);
+  color:var(--espresso);
+  align-self:flex-end;
+}
+
+/* OPTION BUTTONS */
+.option{
+  background:white;
+  border:1px solid #eee;
+  padding:12px;
+  border-radius:12px;
+  cursor:pointer;
+  transition:.2s;
+  font-size:13px;
+}
+
+.option:hover{
+  border-color:var(--gold);
+  transform:translateY(-2px);
+  box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+
+/* BACK BUTTON */
+#back{
+  padding:12px;
+  border:none;
+  background:var(--espresso);
+  color:white;
+  cursor:pointer;
+  width:100%;
+  font-weight:600;
+}
+
+#back:hover{
+  background:var(--gold);
+  color:var(--espresso);
+}
+
+@keyframes fade{
+  from{opacity:0;transform:translateY(6px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- FLOAT BUTTON -->
+<div id="chat-button" onclick="toggleChat()">
+  <img src="https://cdn-icons-png.flaticon.com/512/2950/2950714.png">
+</div>
+
+<!-- CHAT -->
+<div id="chat-box">
+
+  <div id="chat-header">Mocha</div>
+
+  <div id="chat-body"></div>
+
+  <button id="back" onclick="goBack()">Back</button>
+
+</div>
+
+<script>
+
+const chat = document.getElementById("chat-body");
+
+let state = {
+  level: 0,
+  category: null,
+  question: null
+};
+
+/* FULL FAQ DATA (EXPANDED + CORPORATE TONE) */
+const data = {
+
+  "Business Basics": {
+    "What is Pup A Coffee?":
+      "Pup A Coffee is a premium pet refreshment brand designed to bring a café-inspired experience to dogs through safe, thoughtfully crafted beverages and treats.",
+
+    "What products do you offer?":
+      "We offer drink-inspired refreshers designed for dogs, focused on enjoyment, hydration, and a premium experience.",
+
+    "Who are the products for?":
+      "Our products are formulated primarily for dogs. All items are made with general pet-safe ingredients and clear usage guidance."
+  },
+
+  "Safety": {
+    "Are your products caffeine-free?":
+      "Yes. All products are completely caffeine-free.",
+
+    "Do you use coffee?":
+      "No. Our products are coffee-inspired in theme only and contain no actual coffee.",
+
+    "Are ingredients artificial?":
+      "No. We prioritize natural, high-quality ingredients wherever possible.",
+
+    "Are they vet approved?":
+      "Our products are not veterinary-prescribed or medically approved, and are intended as general pet refreshments."
+  },
+
+  "Ingredients": {
+    "Are ingredients natural?":
+      "Yes. We use carefully selected ingredients designed for general pet consumption.",
+
+    "Made in the USA?":
+      "Yes. All products are produced within the United States.",
+
+    "Organic options?":
+      "Select ingredients are sourced to meet organic quality standards where available."
+  },
+
+  "Orders": {
+    "Where do you ship?":
+      "We currently ship within the United States only.",
+
+    "How long is delivery?":
+      "Standard delivery typically takes 5–7 business days depending on location.",
+
+    "Can I track my order?":
+      "Tracking availability depends on the shipping option selected at checkout."
+  },
+
+  "Returns": {
+    "Refund policy?":
+      "We offer partial refunds (up to 50%) depending on the issue type and order condition.",
+
+    "Damaged item?":
+      "If your order arrives damaged, our support team will review it for replacement or partial refund options."
+  },
+
+  "Products": {
+    "Flavors available?":
+      "Flavor selections are updated seasonally and may vary.",
+
+    "Best seller?":
+      "As a growing brand, we are currently collecting product performance data.",
+
+    "Seasonal items?":
+      "Yes. Limited seasonal releases are planned for major holidays."
+  },
+
+  "Feeding": {
+    "How often can pets have it?":
+      "We recommend moderation based on your pet’s size and dietary needs.",
+
+    "Serving sizes?":
+      "Portions are scaled by size categories: XS, S, M, and L.",
+
+    "Puppies allowed?":
+      "Yes, with appropriate portion control and supervision."
+  },
+
+  "Business": {
+    "Subscriptions?":
+      "Yes. Subscription options are available on our product page.",
+
+    "Wholesale?":
+      "Wholesale programs are not currently available.",
+
+    "Partnerships?":
+      "Yes. We welcome collaboration inquiries from qualified partners."
+  },
+
+  "Contact": {
+    "Email support?":
+      "Official support email is currently being finalized.",
+
+    "Social media?":
+      "Social media channels are planned for future release.",
+
+    "Support hours?":
+      "Support requests are accepted at any time."
+  },
+
+  "Brand": {
+    "Why was it created?":
+      "Pup A Coffee was created to bring a joyful, café-inspired experience to pets through safe and thoughtful products.",
+
+    "What makes it different?":
+      "We focus on simplicity, natural ingredients, and a unique café-inspired experience.",
+
+    "Mission?":
+      "To provide pets with a premium, enjoyable refreshment experience."
+  },
+
+  "Future": {
+    "New products?":
+      "Yes. Our product line is actively expanding.",
+
+    "Cat products?":
+      "Yes. Future expansion includes feline-focused products.",
+
+    "Physical stores?":
+      "Yes. Physical retail locations are part of long-term planning."
+  }
+
+};
+
+/* OPEN */
+function toggleChat(){
+  document.getElementById("chat-box").classList.toggle("open");
+  if(state.level === 0) start();
+}
+
+/* START */
+function start(){
+  chat.innerHTML = "";
+
+  addBot("Hi, I’m Mocha — your personal Pup A Coffee assistant.");
+  addBot("I can help you with anything about our brand. Please choose a category below.");
+
+  showCategories();
+}
+
+/* CATEGORY */
+function showCategories(){
+  state.level = 1;
+
+  Object.keys(data).forEach(cat=>{
+    const div = document.createElement("div");
+    div.className="option";
+    div.innerText=cat;
+    div.onclick=()=>selectCategory(cat);
+    chat.appendChild(div);
+  });
+}
+
+/* SELECT CATEGORY */
+function selectCategory(cat){
+  state.category = cat;
+  state.level = 2;
+
+  addUser(cat);
+  chat.innerHTML += `<div class="msg bot">Great. Here are topics under <b>${cat}</b>.</div>`;
+
+  Object.keys(data[cat]).forEach(q=>{
+    const div = document.createElement("div");
+    div.className="option";
+    div.innerText=q;
+    div.onclick=()=>showAnswer(q);
+    chat.appendChild(div);
+  });
+}
+
+/* ANSWER */
+function showAnswer(q){
+  state.question = q;
+  state.level = 3;
+
+  addUser(q);
+
+  const answer = data[state.category][q];
+
+  setTimeout(()=>{
+    addBot(answer);
+  },300);
+}
+
+/* BACK */
+function goBack(){
+  if(state.level <= 1){
+    start();
+  } else if(state.level === 2){
+    start();
+  } else {
+    selectCategory(state.category);
+  }
+}
+
+/* HELPERS */
+function addBot(text){
+  const div=document.createElement("div");
+  div.className="msg bot";
+  div.innerText=text;
+  chat.appendChild(div);
+  chat.scrollTop=chat.scrollHeight;
+}
+
+function addUser(text){
+  const div=document.createElement("div");
+  div.className="msg user";
+  div.innerText=text;
+  chat.appendChild(div);
+  chat.scrollTop=chat.scrollHeight;
+}
+
+</script>
+
+</body>
+</html>

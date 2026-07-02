@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Pup A Coffee | Coming Soon</title>
+
+<link rel="icon" type="image/png" href="favicon.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+
+<style>
+
+:root{
+    --espresso:#2B1B1B;
+    --gold:#F0CB3C;
+    --cream:#FAF9F6;
+    --text:#555;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:Poppins,sans-serif;
+    background:linear-gradient(135deg,#fffefb,#f6efe4);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    overflow:hidden;
+    position:relative;
+}
+
+/* Background */
+
+body::before,
+body::after{
+    content:"";
+    position:absolute;
+    border-radius:50%;
+    filter:blur(90px);
+    opacity:.25;
+    z-index:0;
+}
+
+body::before{
+    width:450px;
+    height:450px;
+    background:var(--gold);
+    top:-150px;
+    left:-120px;
+}
+
+body::after{
+    width:400px;
+    height:400px;
+    background:#d9c3a4;
+    bottom:-150px;
+    right:-120px;
+}
+
+/* Main Card */
+
+.container{
+    position:relative;
+    z-index:2;
+
+    width:min(1100px,92%);
+    min-height:500px;
+
+    display:grid;
+    grid-template-columns:400px 1fr;
+    align-items:center;
+    gap:60px;
+
+    padding:60px;
+
+    background:rgba(255,255,255,.72);
+    backdrop-filter:blur(20px);
+
+    border-radius:32px;
+    border:1px solid rgba(255,255,255,.45);
+
+    box-shadow:
+        0 25px 60px rgba(0,0,0,.12);
+
+    animation:fadeUp .8s ease;
+}
+
+/* Left */
+
+.left{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.logo{
+    width:300px;
+    animation:float 4s ease-in-out infinite;
+}
+
+/* Right */
+
+.right{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+}
+
+.badge{
+    display:inline-block;
+    align-self:flex-start;
+
+    padding:9px 18px;
+
+    border-radius:999px;
+
+    background:rgba(240,203,60,.18);
+
+    color:var(--espresso);
+
+    font-weight:600;
+
+    margin-bottom:25px;
+}
+
+h1{
+    font-family:"DM Serif Display",serif;
+    font-size:4rem;
+    line-height:1;
+    color:var(--espresso);
+    margin-bottom:20px;
+}
+
+p{
+    color:var(--text);
+    font-size:1.08rem;
+    line-height:1.9;
+    max-width:560px;
+}
+
+.divider{
+    width:90px;
+    height:5px;
+    background:var(--gold);
+    border-radius:999px;
+    margin:30px 0;
+}
+
+.notice{
+    margin-top:35px;
+    color:#777;
+    font-size:.95rem;
+}
+
+/* Footer */
+
+footer{
+    position:absolute;
+    bottom:25px;
+    left:50%;
+    transform:translateX(-50%);
+    color:#666;
+    font-size:.9rem;
+    z-index:5;
+}
+
+/* Animations */
+
+@keyframes float{
+
+0%,100%{
+transform:translateY(0px);
+}
+
+50%{
+transform:translateY(-10px);
+}
+
+}
+
+@keyframes fadeUp{
+
+from{
+opacity:0;
+transform:translateY(35px);
+}
+
+to{
+opacity:1;
+transform:translateY(0);
+}
+
+}
+
+/* Mobile */
+
+@media(max-width:900px){
+
+body{
+    overflow:auto;
+    padding:30px 0;
+}
+
+.container{
+
+    width:92%;
+
+    grid-template-columns:1fr;
+
+    gap:40px;
+
+    padding:40px 30px;
+
+    text-align:center;
+
+    min-height:auto;
+}
+
+.logo{
+    width:180px;
+}
+
+.badge{
+    align-self:center;
+}
+
+h1{
+    font-size:2.8rem;
+}
+
+p{
+    margin:auto;
+}
+
+.divider{
+    margin:30px auto;
+}
+
+footer{
+    position:static;
+    transform:none;
+    margin-top:30px;
+    text-align:center;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="left">
+
+        <img src="images/logo.png" alt="Pup A Coffee Logo" class="logo">
+
+    </div>
+
+    <div class="right">
+
+        <div class="badge">
+            Website Under Construction
+        </div>
+
+        <h1>Coming Soon</h1>
+
+        <p>
+            We're working behind the scenes to build the ultimate online café for dogs. From handcrafted, pet-safe refreshments to premium treats and an all-new shopping experience, Pup A Coffee is almost ready to launch.
+        </p>
+
+        <div class="divider"></div>
+
+        <p>
+            Thank you for your patience while we put the finishing touches on everything. We look forward to welcoming you and your pup very soon.
+        </p>
+
+        <p class="notice">
+            Check back soon for updates.
+        </p>
+
+    </div>
+
+</div>
+
+<footer>
+    © 2026 Pup A Coffee. All Rights Reserved.
+</footer>
+
+</body>
+</html>
